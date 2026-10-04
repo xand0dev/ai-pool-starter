@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Pool Starter — не прив’язуйся до однієї моделі</title>
+<meta name="description" content="Один інструмент — увесь пул моделей. Контекст проєкту — у репозиторії. Сетап за 10 хвилин.">
+<style>
+  :root { --blue:#4F6FFF; --yellow:#FFDB41; --lime:#C1F469; --ink:#2D49C5; --dark:#2A2525; --xp:#245EDC; --xpline:#0831D9; --red:#E0482D; --navy:#1B2250; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--blue); color:var(--dark); font:18px/1.5 "Arial Narrow", "Roboto Condensed", Arial, sans-serif; padding-bottom:56px; }
+  a { color:inherit; }
+  .wrap { width:min(980px, 100% - 32px); margin:0 auto; padding:28px 0; }
+  .kicker { display:inline-block; background:#fff; color:var(--ink); font-weight:700; padding:.35rem .8rem; transform:rotate(-1.5deg); box-shadow:4px 4px 0 rgba(0,0,0,.3); }
+  h1 { color:var(--yellow); font-size:clamp(2.4rem, 7vw, 4.4rem); line-height:1; margin:14px 0 8px; }
+  .lead { color:#fff; font-size:1.3rem; margin:0 0 18px; max-width:760px; }
+  .cta { display:flex; flex-wrap:wrap; gap:12px; margin:8px 0 6px; }
+  .btn { display:inline-block; text-decoration:none; font:700 17px Tahoma, Verdana, sans-serif; padding:10px 16px; border:2px solid var(--dark); background:var(--yellow); box-shadow:4px 4px 0 rgba(0,0,0,.35); }
+  .btn.white { background:#fff; }
+  .btn:hover, .btn:focus-visible { transform:translate(-1px,-1px); box-shadow:6px 6px 0 rgba(0,0,0,.35); outline:none; }
+  .win { background:#fff; border:2px solid var(--xpline); box-shadow:8px 8px 0 rgba(0,0,0,.28); margin:26px 0; }
+  .bar { display:flex; align-items:center; background:var(--xp); color:#fff; font:700 15px Tahoma, Verdana, sans-serif; padding:7px 8px 7px 14px; }
+  .bar span { flex:1; } .bar i, .bar b { display:inline-grid; place-items:center; width:22px; height:22px; border:1px solid #fff; margin-left:6px; font-style:normal; }
+  .bar i { background:#3C7BFF; } .bar b { background:var(--red); }
+  .body { padding:18px 22px; }
+  h2 { color:var(--ink); margin:0 0 10px; font-size:1.7rem; line-height:1.1; }
+  h3 { color:var(--ink); margin:16px 0 6px; font-size:1.25rem; }
+  .num { display:inline-grid; place-items:center; width:32px; height:32px; border-radius:50%; background:var(--yellow); border:2px solid var(--dark); font-weight:700; margin-right:8px; }
+  .code { position:relative; margin:8px 0; background:var(--navy); color:#E8ECFF; font:15px/1.5 Menlo, "Courier New", monospace; padding:10px 96px 10px 12px; white-space:pre-wrap; overflow-wrap:anywhere; }
+  .copy { position:absolute; top:6px; right:6px; font:700 13px Tahoma, sans-serif; background:var(--yellow); border:2px solid var(--dark); padding:3px 9px; cursor:pointer; }
+  .copy.ok { background:var(--lime); }
+  table { width:100%; border-collapse:collapse; table-layout:fixed; }
+  th { background:#EEF2FF; color:var(--ink); text-align:left; padding:8px; font:700 14px Tahoma, sans-serif; }
+  td { padding:8px; border-bottom:1px solid #e3e6f5; vertical-align:top; overflow-wrap:anywhere; }
+  code { font-family:Menlo, "Courier New", monospace; font-size:.92em; background:#EEF2FF; padding:0 4px; overflow-wrap:anywhere; }
+  .files { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px; }
+  .file { border:2px solid #c9d3ff; background:#F7F9FF; padding:12px; }
+  .file b { display:block; font-family:Menlo, monospace; color:var(--ink); }
+  .file a { font:700 14px Tahoma, sans-serif; color:#0645AD; }
+  ol.cycle { padding-left:1.3rem; margin:0; } ol.cycle li { margin:6px 0; }
+  .warn { background:#FFF0F5; border:1.5px solid #F2A9C4; padding:8px 12px; margin:10px 0; }
+  .big { font-size:1.35rem; font-weight:700; color:var(--ink); background:var(--yellow); display:inline-block; padding:8px 14px; transform:rotate(-.6deg); box-shadow:4px 4px 0 rgba(0,0,0,.25); margin:6px 0 4px; }
+  footer { color:#fff; font-size:15px; margin-top:24px; }
+  .taskbar { position:fixed; left:0; right:0; bottom:0; height:44px; background:rgba(0,0,0,.22); display:flex; align-items:center; gap:16px; padding:0 18px; color:#fff; font:13px Tahoma, sans-serif; }
+  .taskbar .s { width:200px; max-width:40vw; height:24px; border:2px solid #fff; border-radius:14px; }
+  .taskbar .c { margin-left:auto; }
+  @media (max-width:560px) { .code { padding:36px 12px 10px; } th:nth-child(3), td:nth-child(3) { display:none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="kicker">AI-воркшоп · КАІ · 2026</span>
+  <h1>Не прив’язуйся до однієї моделі</h1>
+  <p class="lead">Один інструмент — увесь пул моделей. Контекст проєкту — у репозиторії, а не в чаті. Закінчився ліміт → <b>/models</b> → інша модель продовжує з того самого місця.</p>
+  <div class="cta">
+    <a class="btn" href="https://github.com/xand0dev/ai-pool-starter/archive/refs/heads/main.zip">⬇ Завантажити шаблон (ZIP)</a>
+    <a class="btn white" href="https://github.com/xand0dev/ai-pool-starter" target="_blank" rel="noopener">Репозиторій на GitHub ↗</a>
+  </div>
+
+  <section class="win">
+    <div class="bar"><span>Сетап за 10 хвилин</span><i>_</i><b>×</b></div>
+    <div class="body">
+      <h3><span class="num">1</span>Встановити OpenCode</h3>
+      <div class="code"><button class="copy">Копіювати</button>curl -fsSL https://opencode.ai/install | bash</div>
+      <p>Або <code>brew install anomalyco/tap/opencode</code>, або <code>npm install -g opencode-ai</code> (зручно на Windows).</p>
+
+      <h3><span class="num">2</span>Зібрати свій пул: <code>/connect</code></h3>
+      <p>Запустіть <code>opencode</code>, наберіть <code>/connect</code> і підключіть те, що у вас уже є:</p>
+      <table>
+        <tr><th>Звідки модель</th><th>Що вибрати</th><th>Вартість</th></tr>
+        <tr><td>Підписка ChatGPT</td><td>OpenAI → ChatGPT Plus/Pro</td><td>у межах підписки</td></tr>
+        <tr><td>Підписка Copilot</td><td>GitHub Copilot</td><td>у межах плану</td></tr>
+        <tr><td>Безкоштовно</td><td>OpenCode Zen → моделі <b>Free</b></td><td>перелік змінюється</td></tr>
+        <tr><td>Свій ключ (BYOK)</td><td>Anthropic, Google, DeepSeek…</td><td>за тарифом провайдера</td></tr>
+        <tr><td>Локально</td><td>LM Studio / Ollama (див. README)</td><td>ваш комп’ютер</td></tr>
+      </table>
+      <div class="warn">API-ключ — це секрет. Не вставляйте його в код, у чат і не показуйте на екрані.</div>
+
+      <h3><span class="num">3</span>Відкрити поруч із кодом у VS Code</h3>
+      <p>Запустіть <code>opencode</code> у терміналі VS Code — інтеграція поставиться сама. <b>Cmd+Esc</b> (Windows/Linux: <b>Ctrl+Esc</b>) відкриває OpenCode поруч із кодом; виділений фрагмент автоматично йде в контекст.</p>
+
+      <h3><span class="num">4</span>Додати контекст у свій проєкт</h3>
+      <p>Скопіюйте файли шаблону в корінь свого репозиторію (або завантажте ZIP вище):</p>
+      <div class="files">
+        <div class="file"><b>AGENTS.md</b>Постійні правила. Заповнити один раз — OpenCode читає сам.<br><a href="https://github.com/xand0dev/ai-pool-starter/blob/main/AGENTS.md" target="_blank" rel="noopener">відкрити ↗</a></div>
+        <div class="file"><b>PROJECT_CONTEXT.md</b>Поточний стан і план по кроках.<br><a href="https://github.com/xand0dev/ai-pool-starter/blob/main/PROJECT_CONTEXT.md" target="_blank" rel="noopener">відкрити ↗</a></div>
+        <div class="file"><b>HANDOFF.md</b>Де зупинились і що робити далі.<br><a href="https://github.com/xand0dev/ai-pool-starter/blob/main/HANDOFF.md" target="_blank" rel="noopener">відкрити ↗</a></div>
+        <div class="file"><b>opencode.json</b>Підключає PROJECT_CONTEXT і HANDOFF до кожної моделі.<br><a href="https://github.com/xand0dev/ai-pool-starter/blob/main/opencode.json" target="_blank" rel="noopener">відкрити ↗</a></div>
+        <div class="file"><b>.opencode/commands/</b>Команди <code>/handoff</code> і <code>/resume</code>.<br><a href="https://github.com/xand0dev/ai-pool-starter/tree/main/.opencode/commands" target="_blank" rel="noopener">відкрити ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="win">
+    <div class="bar"><span>Щоденний цикл</span><i>_</i><b>×</b></div>
+    <div class="body">
+      <ol class="cycle">
+        <li>Працюєте з будь-якою моделлю. <b>Tab</b> перемикає <b>Plan</b> (правки лише з дозволу) ↔ <b>Build</b>.</li>
+        <li>Закінчився ліміт → <code>/models</code> → інша модель продовжує в тому самому чаті.</li>
+        <li>Перерва або нова сесія → <code>/handoff</code> — оновлює HANDOFF.md.</li>
+        <li>Нова сесія → <code>/new</code> → <code>/resume</code> — будь-яка модель підхоплює роботу з файлів.</li>
+        <li>Перевіряйте результат самі: агент може написати «працює», коли не працює.</li>
+      </ol>
+      <div class="big">Chat = temporary context · Repo = persistent project context</div>
+    </div>
+  </section>
+
+  <section class="win">
+    <div class="bar"><span>Чому файли, а не «пам’ять чату»</span><i>_</i><b>×</b></div>
+    <div class="body">
+      <table>
+        <tr><th></th><th>Prompt cache</th><th>Project Context (ці файли)</th></tr>
+        <tr><td><b>Навіщо</b></td><td>дешевше й швидше повторювати той самий запит</td><td>зберегти стан роботи</td></tr>
+        <tr><td><b>Де живе</b></td><td>у провайдера, з часом життя</td><td>у вашому репозиторії, під git</td></tr>
+        <tr><td><b>Переживає зміну моделі</b></td><td>ні</td><td>так</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <footer>Документація: <a href="https://opencode.ai/docs" target="_blank" rel="noopener">OpenCode</a> · <a href="https://agents.md/" target="_blank" rel="noopener">AGENTS.md</a> · Тарифи й безкоштовні моделі змінюються — перевіряйте актуальні сторінки провайдерів. Воркшоп «Не прив’язуйся до однієї моделі», КАІ, 2026.</footer>
+</div>
+<div class="taskbar" aria-hidden="true"><span>☰</span><span class="s"></span><span>📁</span><span class="c">5:30 PM · 2/15/2026</span></div>
+<script>
+  document.addEventListener('click', async (e) => {
+    const b = e.target.closest('.copy'); if (!b) return;
+    const text = b.parentElement.innerText.replace(b.innerText, '').trim();
+    try { await navigator.clipboard.writeText(text); } catch { const a = document.createElement('textarea'); a.value = text; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); }
+    b.textContent = 'Скопійовано'; b.classList.add('ok'); setTimeout(() => { b.textContent = 'Копіювати'; b.classList.remove('ok'); }, 1300);
+  });
+</script>
+</body>
+</html>
